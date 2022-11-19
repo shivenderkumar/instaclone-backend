@@ -1,27 +1,63 @@
-const bodyParser = require('body-parser');
 const express = require('express');
+const bodyParser = require('body-parser');
+const postModel = require('../models/post');
+const {UploadApiResponse,v2 } = require('cloudinary');
+const multer = require('multer');
 const router = express.Router();
 
-router.use(bodyParser.json)
-router.use(bodyParser.urlencoded({extended: false}));
+const storage = multer.diskStorage({})
+const upload =  multer({storage})
 
-router.get("/posts",(req,res)=>{
+router.use(bodyParser.json())
+router.use(bodyParser.urlencoded({extended: true}));
+
+router.get("/", async (req,res)=>{
     try{
-        //get all posts from mongodb
-        const posts = []; //getAllPosts()
-        res.status(200).json(posts);
+        console.log("api called - get posts");
+        const posts = await postModel.find()
+        res.status(200).json({
+            status: "success",
+            data : posts
+        });
     }catch(err){
         res.status(400).json({error : err.message})
     }
 });
 
-router.post("/posts/add",(req,res)=>{
+router.post("/add", upload.single('postimage') ,async (req,res)=>{
     try{
-        console.log(req.body);
+        console.log("api called - get posts");
+        if(!req.file){
+            return res.status(400).json({
+                status: "failed",
+                message : "please select file"
+            })
+        }
+        console.log(req.file);
+
+        let uploadedFile = UploadApiResponse;
+        try{
+            uploadedFile = await v2.uploader.upload(req.file.path, {
+                folder: "instaclone",
+                resource_type: "auto"
+            });
+
+        }catch(err){
+            console.log("error in loading file to cloudinary :",err);
+        }
+        console.log("loaded file to cloudinary URL is :",uploadedFile.url);
+
         //create post obj from req body
+
         //add that obj in mongodb
-        //get res from mongodb
-        //send that res
+        // const mongoRes = await postModel.create(post)
+        // //get res from mongodb and send that res
+        // res.status(200).json({
+        //     status: "success",
+        //     data : mongoRes
+        // });
+        res.json({name: "ko"})
+
     }catch(err){
         res.status(400).json({error : err.message})
     }
