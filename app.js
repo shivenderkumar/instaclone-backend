@@ -1,9 +1,8 @@
 const express = require('express');
 const port = 8080;
-
 const mongoose = require('mongoose');
-const postModel = require('./models/post');
-mongoose.connect("mongodb://127.0.0.1:27017/instaclone")
+mongoose.connect("mongodb://127.0.0.1:27017/instaclone");
+const postRouter = require('./routes/post');
 
 const app = express();
 
@@ -36,6 +35,7 @@ const app = express();
 //     }
 // ]
 
+app.use("/api/v1/posts", postRouter)
 
 app.get("/", async (req, res) => {
     //create some default records in db from statis data
