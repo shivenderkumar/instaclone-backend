@@ -33,7 +33,7 @@ router.post("/add", upload.single('postimage') ,async (req,res)=>{
                 message : "please select file"
             })
         }
-        console.log(req.file);
+//        console.log(req.file);
 
         let uploadedFile = UploadApiResponse;
         try{
@@ -45,18 +45,20 @@ router.post("/add", upload.single('postimage') ,async (req,res)=>{
         }catch(err){
             console.log("error in loading file to cloudinary :",err);
         }
-        console.log("loaded file to cloudinary URL is :",uploadedFile.url);
-
+//        console.log("loaded file to cloudinary URL is :",uploadedFile.url);
         //create post obj from req body
-
+        const post = {
+            ...req.body,
+            imageurl: uploadedFile.url
+        }
+        console.log(post);
         //add that obj in mongodb
-        // const mongoRes = await postModel.create(post)
+        const mongoRes= await postModel.create(post);
         // //get res from mongodb and send that res
-        // res.status(200).json({
-        //     status: "success",
-        //     data : mongoRes
-        // });
-        res.json({name: "ko"})
+        res.status(200).json({
+            status: "success",
+            data : mongoRes
+        });
 
     }catch(err){
         res.status(400).json({error : err.message})
