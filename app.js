@@ -1,41 +1,17 @@
 const express = require('express');
-const port = 8080;
 const mongoose = require('mongoose');
-mongoose.connect("mongodb://127.0.0.1:27017/instaclone");
 const postRouter = require('./routes/post');
+const dotenv = require('dotenv');
+const cors = require('cors'); //middleware
+const cloudinary = {v2} = require('cloudinary');
 
+dotenv.config();
+const port = process.env.PORT;
 const app = express();
-
-//const tempImageUrl = "https://media.distractify.com/brand-img/wN0Hm22u0/0x0/watch-naruto-in-order-1598141302084.jpg"
-
-// const posts = [
-//     {
-//         name: "Siva",
-//         location: "Bengaluru",
-//         likes: 64,
-//         description: "Kick start your career",
-//         imageurl: tempImageUrl,
-//         date: new Date(),
-//     },
-//     {
-//         name: "Neeraj",
-//         location: "Pune",
-//         likes: 30,
-//         description: "Sample Description",
-//         imageurl: tempImageUrl,
-//         date: new Date(),
-//     },
-//     {
-//         name: "Rahul",
-//         location: "Hyderabad",
-//         likes: 30,
-//         description: "Sample Description for Post",
-//         imageurl: tempImageUrl,
-//         date: new Date(),
-//     }
-// ]
-
+mongoose.connect("mongodb://127.0.0.1:27017/instaclone");
+app.use(cors()); 
 app.use("/api/v1/posts", postRouter)
+
 
 app.get("/", async (req, res) => {
     //create some default records in db from statis data
@@ -51,6 +27,12 @@ app.get("/", async (req, res) => {
     // }catch(err){
     //     res.end("error : ",err);
     // }
+});
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_API_CLOUD,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
 })
 
 app.listen(port, () => console.log(`Server started listening on port ${port}`))

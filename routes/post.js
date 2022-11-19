@@ -1,17 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const postModel = require('../models/post');
+const {UploadApiResponse,v2 } = require('cloudinary');
+const multer = require('multer');
 const router = express.Router();
 
-const multer = require('multer')
-const storage = multer.diskStorage({
-    destination (req, file, cb) {
-        cb(null, 'uploads/images');
-    },
-    filename (req, file, cb) {
-        cb(null, file.originalname);
-    }
-})
+const storage = multer.diskStorage({})
 const upload =  multer({storage})
 
 router.use(bodyParser.json())
@@ -33,8 +27,26 @@ router.get("/", async (req,res)=>{
 router.post("/add", upload.single('postimage') ,async (req,res)=>{
     try{
         console.log("api called - get posts");
+        if(!req.file){
+            return res.status(400).json({
+                status: "failed",
+                message : "please select file"
+            })
+        }
         console.log(req.file);
-        console.log(req.body);
+
+        let uploadedFile = UploadApiResponse;
+        try{
+            uploadedFile = await v2.uploader.upload(req.file.path, {
+                folder: "instaclone",
+                resource_type: "auto"
+            });
+
+        }catch(err){
+            console.log("error in loading file to cloudinary :",err);
+        }
+        console.log("loaded file to cloudinary URL is :",uploadedFile.url);
+
         //create post obj from req body
 
         //add that obj in mongodb
