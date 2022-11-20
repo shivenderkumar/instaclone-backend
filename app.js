@@ -8,7 +8,10 @@ const cloudinary = {v2} = require('cloudinary');
 dotenv.config();
 const port = process.env.PORT;
 const app = express();
-mongoose.connect("mongodb://127.0.0.1:27017/instaclone");
+// mongoose.connect("mongodb://127.0.0.1:27017/instaclone");
+const mongodbUri = process.env.MONGODB_URI;
+mongoose.connect(mongodbUri);
+
 app.use(cors()); 
 app.use("/posts", postRouter)
 
