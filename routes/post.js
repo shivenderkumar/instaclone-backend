@@ -16,7 +16,6 @@ router.get("/", async (req,res)=>{
         console.log("api called - get posts");
         const posts = await postModel.find()
         res.status(200).json({
-            status: "success",
             data : posts
         });
     }catch(err){
@@ -24,15 +23,17 @@ router.get("/", async (req,res)=>{
     }
 });
 
-router.post("/add", upload.single('postimage') ,async (req,res)=>{
+router.post("/create", upload.single('postimage') ,async (req,res)=>{
     try{
         console.log("api called - get posts");
+        console.log(req.file.path);
         if(!req.file){
             return res.status(400).json({
                 status: "failed",
                 message : "please select file"
             })
         }
+
 //        console.log(req.file);
 
         let uploadedFile = UploadApiResponse;

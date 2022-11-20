@@ -10,7 +10,7 @@ const port = process.env.PORT;
 const app = express();
 mongoose.connect("mongodb://127.0.0.1:27017/instaclone");
 app.use(cors()); 
-app.use("/api/v1/posts", postRouter)
+app.use("/posts", postRouter)
 
 
 app.get("/", async (req, res) => {
@@ -22,7 +22,9 @@ app.get("/", async (req, res) => {
     //         res.end("Mongo default res entered successfullt");        
     //     }
     //     else{
-            res.end("Welcome to instaclone backend");
+            res.status(200).json({
+                message: "Welcome to instaclone backend"
+            });
     //     }
     // }catch(err){
     //     res.end("error : ",err);
